@@ -1,12 +1,3 @@
-2026/04/03-19:17:37.131 2b8c Creating DB C:\Users\ACER\qr-absensi-sekolah\whatsapp\sessions\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb since it was missing.
-2026/04/03-19:17:37.273 2b8c Reusing MANIFEST C:\Users\ACER\qr-absensi-sekolah\whatsapp\sessions\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2026/04/03-19:17:57.474 2b8c Level-0 table #5: started
-2026/04/03-19:17:57.557 2b8c Level-0 table #5: 1011317 bytes OK
-2026/04/03-19:17:57.559 2b8c Delete type=0 #3
-2026/04/03-19:18:39.298 2b8c Level-0 table #7: started
-2026/04/03-19:18:39.332 2b8c Level-0 table #7: 1078597 bytes OK
-2026/04/03-19:18:39.335 2b8c Delete type=0 #4
-2026/04/03-19:18:39.533 2b8c Compacting 1@1 + 1@2 files
-2026/04/03-19:18:39.624 2b8c Generated table #8@1: 22156 keys, 865116 bytes
-2026/04/03-19:18:39.624 2b8c Compacted 1@1 + 1@2 files => 865116 bytes
-2026/04/03-19:18:39.625 2b8c compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/04/03-20:09:01.861 4cb8 Reusing MANIFEST C:\Users\ACER\qr-absensi-sekolah\whatsapp\sessions\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/04/03-20:09:01.861 4cb8 Recovering log #6
+2026/04/03-20:09:01.967 4cb8 Reusing old log C:\Users\ACER\qr-absensi-sekolah\whatsapp\sessions\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000006.log 
