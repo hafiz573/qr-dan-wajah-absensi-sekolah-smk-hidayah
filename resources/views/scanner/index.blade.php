@@ -9,9 +9,9 @@
         <!-- Main Scanner Area -->
         <div class="glass-card p-8 flex-1">
         <div id="scanner-wrapper" style="position: relative; border-radius: 1rem; overflow: hidden; border: 2px solid var(--glass-border); aspect-ratio: 4/3; background: #000;">
-            <div id="reader" style="width: 100%; height: 100%;"></div>
-            <video id="face-video" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: none;"></video>
-            <canvas id="face-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+            <div id="reader" style="width: 100%; height: 100%; transform: scaleX(-1);"></div>
+            <video id="face-video" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: none; transform: scaleX(-1);"></video>
+            <canvas id="face-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; transform: scaleX(-1);"></canvas>
             
             <!-- Real-time Feedback Badge -->
             <div id="face-hint-badge" style="position: absolute; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 20; display: none;">

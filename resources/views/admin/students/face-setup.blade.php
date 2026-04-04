@@ -13,9 +13,9 @@
         </div>
 
         <div id="video-container" style="position: relative; width: 100%; height: 400px; background: #1e293b; border-radius: 0.75rem; overflow: hidden; margin-bottom: 1.5rem; border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center;">
-            <video id="video" width="100%" height="100%" autoplay muted style="object-fit: cover; object-position: top; display: none;"></video>
+            <video id="video" width="100%" height="100%" autoplay muted style="object-fit: cover; object-position: top; display: none; transform: scaleX(-1);"></video>
             <img id="photo-preview" style="width: 100%; height: 100%; object-fit: contain; display: none;">
-            <canvas id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+            <canvas id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; transform: scaleX(-1);"></canvas>
             
             <div id="placeholder" class="text-center">
                 <i data-lucide="user-square-2" style="width: 60px; height: 60px; color: var(--text-muted); opacity: 0.3; margin: 0 auto 1rem;"></i>
