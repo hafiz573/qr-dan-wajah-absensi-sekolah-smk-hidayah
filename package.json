@@ -5,7 +5,7 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "dev-all": "concurrently \"php artisan serve\" \"npm run dev\" \"npm start --prefix whatsapp\""
+        "dev-all": "concurrently \"php artisan serve\" \"npm run dev\" \"npm start --prefix whatsapp\" \"php artisan schedule:work\""
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
