@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+            \URL::forceScheme('https');
+        }
+
         try {
             if (class_exists(\App\Models\Setting::class) && \Schema::hasTable('settings')) {
                 $timezone = \App\Models\Setting::get('timezone', 'Asia/Jakarta');
