@@ -10,6 +10,7 @@ class TeacherContact extends Model
     use HasFactory;
 
     protected $fillable = [
+        'name',
         'class_name',
         'phone_number',
     ];

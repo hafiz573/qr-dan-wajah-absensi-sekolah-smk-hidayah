@@ -13,7 +13,7 @@ class TeacherContactController extends Controller
     {
         $contacts = TeacherContact::all();
         // Get available classes from students
-        $availableClasses = Student::select('class')->distinct()->pluck('class');
+        $availableClasses = Student::where('status', 'active')->select('class')->distinct()->pluck('class');
         
         return view('admin.teachers.index', compact('contacts', 'availableClasses'));
     }
@@ -21,6 +21,7 @@ class TeacherContactController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'name' => 'required|string|max:255',
             'class_name' => 'required|unique:teacher_contacts',
             'phone_number' => 'required',
         ]);
@@ -33,6 +34,7 @@ class TeacherContactController extends Controller
     public function update(Request $request, TeacherContact $teacherContact)
     {
         $request->validate([
+            'name' => 'required|string|max:255',
             'class_name' => 'required|unique:teacher_contacts,class_name,' . $teacherContact->id,
             'phone_number' => 'required',
         ]);

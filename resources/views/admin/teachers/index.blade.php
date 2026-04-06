@@ -26,19 +26,21 @@
         <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
                 <tr style="border-bottom: 1px solid var(--glass-border);">
+                    <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">A/N</th>
                     <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Kelas</th>
                     <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Nomor WhatsApp</th>
-                    <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Aksi</th>
+                    <th style="padding: 1rem; color: var(--text-muted); font-weight: 500;">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($contacts as $contact)
                 <tr style="border-bottom: 1px solid var(--glass-border);">
-                    <td style="padding: 1rem; font-weight: 600;">{{ $contact->class_name }}</td>
+                    <td style="padding: 1rem;">{{ $contact->name ?? '-' }}</td>
+                    <td style="padding: 1rem; font-weight: 600;">{{ $contact->class_name ?? '-' }}</td>
                     <td style="padding: 1rem;">{{ $contact->phone_number }}</td>
                     <td style="padding: 1rem;">
                         <div class="flex gap-2">
-                            <button onclick="openEditModal({{ $contact->id }}, '{{ $contact->class_name }}', '{{ $contact->phone_number }}')" class="nav-link" style="padding: 0.5rem; border:none; background:none; cursor:pointer;" title="Edit">
+                            <button onclick="openEditModal({{ $contact->id }}, '{{ $contact->name }}', '{{ $contact->class_name }}', '{{ $contact->phone_number }}')" class="nav-link" style="padding: 0.5rem; border:none; background:none; cursor:pointer;" title="Edit">
                                 <i data-lucide="edit-2" style="width: 18px;"></i>
                             </button>
                             <form action="{{ route('admin.teachers.destroy', $contact->id) }}" method="POST" onsubmit="return confirm('Hapus kontak ini?')">
@@ -67,6 +69,10 @@
         <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;">Tambah Kontak Wali Kelas</h3>
         <form action="{{ route('admin.teachers.store') }}" method="POST">
             @csrf
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Nama Lengkap (A/N)</label>
+                <input type="text" name="name" class="glass-card w-full" style="padding: 0.75rem; outline: none;" placeholder="Bapak/Ibu Nama..." required>
+            </div>
             <div style="margin-bottom: 1rem;">
                 <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Pilih Kelas</label>
                 <select name="class_name" class="glass-card w-full" style="padding: 0.75rem; outline: none;" required>
@@ -97,8 +103,17 @@
             @csrf
             @method('PUT')
             <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Nama Lengkap (A/N)</label>
+                <input type="text" id="edit_name" name="name" class="glass-card w-full" style="padding: 0.75rem; outline: none;" required>
+            </div>
+            <div style="margin-bottom: 1rem;">
                 <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Kelas</label>
-                <input type="text" id="edit_class_name" name="class_name" class="glass-card w-full" style="padding: 0.75rem; outline: none; background: rgba(0,0,0,0.05);" readonly>
+                <select id="edit_class_name" name="class_name" class="glass-card w-full" style="padding: 0.75rem; outline: none;" required>
+                    <option value="">-- Pilih Kelas --</option>
+                    @foreach($availableClasses as $class)
+                        <option value="{{ $class }}">{{ $class }}</option>
+                    @endforeach
+                </select>
             </div>
             <div style="margin-bottom: 2rem;">
                 <label style="display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.5rem;">Nomor WhatsApp</label>
@@ -119,8 +134,9 @@
     function closeAddModal() {
         document.getElementById('addModal').style.display = 'none';
     }
-    function openEditModal(id, class_name, phone_number) {
+    function openEditModal(id, name, class_name, phone_number) {
         document.getElementById('editForm').action = `/admin/teacher-contacts/${id}`;
+        document.getElementById('edit_name').value = name;
         document.getElementById('edit_class_name').value = class_name;
         document.getElementById('edit_phone_number').value = phone_number;
         document.getElementById('editModal').style.display = 'flex';

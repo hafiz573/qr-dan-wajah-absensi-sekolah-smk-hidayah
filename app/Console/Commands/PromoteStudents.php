@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Setting;
 use App\Models\Student;
+use App\Models\TeacherContact;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -80,10 +81,66 @@ class PromoteStudents extends Command
             }
         }
 
-        $this->info("Promotion completed!");
-        $this->info("Promoted: {$promotedCount} students.");
-        $this->info("Graduated (Lulus): {$graduatedCount} students.");
+        $this->info('Starting teacher promotion process...');
         
-        Log::info("Student promotion completed. Promoted: {$promotedCount}, Graduated: {$graduatedCount}");
+        // Use TeacherContact records, sorted by class level descending to avoid unique constraint collisions
+        $teachers = TeacherContact::all();
+        $teacherData = [];
+        
+        foreach ($teachers as $teacher) {
+            $oldClass = $teacher->class_name;
+            $level = 0;
+            $suffix = '';
+            
+            if (preg_match('/^([IVX]+)(.*)$/i', $oldClass, $matches)) {
+                $currentRoman = strtoupper($matches[1]);
+                $suffix = $matches[2];
+                if (isset($romanMap[$currentRoman])) {
+                    $level = $romanMap[$currentRoman];
+                }
+            }
+            
+            $teacherData[] = [
+                'model' => $teacher,
+                'level' => $level,
+                'oldClass' => $oldClass,
+                'suffix' => $suffix
+            ];
+        }
+        
+        // Sort DESC by level: XII -> XI -> X
+        usort($teacherData, function($a, $b) {
+            return $b['level'] <=> $a['level'];
+        });
+        
+        $teachersDeletedCount = 0;
+        $teachersPromotedCount = 0;
+        
+        foreach ($teacherData as $data) {
+            if ($data['level'] > 0) {
+                $nextLevel = $data['level'] + 1;
+                
+                if ($nextLevel > $maxGrade) {
+                    // Clear teacher contact for graduation as requested
+                    $data['model']->class_name = null;
+                    $data['model']->save();
+                    $teachersDeletedCount++;
+                    Log::info("Teacher contact cleared (Graduated): {$data['oldClass']}");
+                } else {
+                    // Update to next grade lvl
+                    $nextRoman = $numToRoman[$nextLevel];
+                    $data['model']->class_name = $nextRoman . $data['suffix'];
+                    $data['model']->save();
+                    $teachersPromotedCount++;
+                    Log::info("Teacher promoted: {$data['oldClass']} -> {$data['model']->class_name}");
+                }
+            }
+        }
+
+        $this->info("Promotion completed!");
+        $this->info("Students - Promoted: {$promotedCount}, Graduated: {$graduatedCount}");
+        $this->info("Wali Kelas - Promoted: {$teachersPromotedCount}, Deleted (Graduated): {$teachersDeletedCount}");
+        
+        Log::info("Promotion summary - Students: P:{$promotedCount} G:{$graduatedCount} | Teachers: P:{$teachersPromotedCount} D:{$teachersDeletedCount}");
     }
 }
