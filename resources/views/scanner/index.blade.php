@@ -9,9 +9,9 @@
         <!-- Main Scanner Area -->
         <div class="glass-card p-8 flex-1">
         <div id="scanner-wrapper" style="position: relative; border-radius: 1rem; overflow: hidden; border: 2px solid var(--glass-border); aspect-ratio: 4/3; background: #000;">
-            <div id="reader" style="width: 100%; height: 100%; transform: scaleX(-1);"></div>
-            <video id="face-video" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: none; transform: scaleX(-1);"></video>
-            <canvas id="face-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; transform: scaleX(-1);"></canvas>
+            <div id="reader" style="width: 100%; height: 100%;"></div>
+            <video id="face-video" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; display: none;"></video>
+            <canvas id="face-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
             
             <!-- Real-time Feedback Badge -->
             <div id="face-hint-badge" style="position: absolute; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 20; display: none;">
@@ -180,6 +180,23 @@
     const loaderText = document.getElementById('loader-text');
     const statusMsg = document.getElementById('status-message');
     const resetBtn = document.getElementById('reset-scanner');
+    
+    // Camera Configuration from Env
+    const isTestDemo = {{ env('TEST_DEMO', false) ? 'true' : 'false' }};
+    const isGuruHP = {{ env('QR_GURU_USE_HP', false) ? 'true' : 'false' }};
+
+    // Determine Facing Modes
+    const qrFacingMode = (isGuruHP || isTestDemo) ? "environment" : "user";
+    const faceFacingMode = isGuruHP ? "environment" : "user";
+
+    // Set Initial Mirroring
+    if (qrFacingMode === 'user') {
+        document.getElementById('reader').style.transform = 'scaleX(-1)';
+    }
+    if (faceFacingMode === 'user') {
+        faceVideo.style.transform = 'scaleX(-1)';
+        faceOverlay.style.transform = 'scaleX(-1)';
+    }
 
     // Load Face Models
     let modelsLoaded = false;
@@ -240,7 +257,7 @@
     // Start QR Scanner
     function startQRScanner() {
         scanner = new Html5Qrcode("reader");
-        scanner.start({ facingMode: "user" }, {
+        scanner.start({ facingMode: qrFacingMode }, {
             fps: 15, // Ditingkatkan untuk respon lebih cepat
         }, onScanSuccess).catch(err => {
             alert("Kesalahan Kamera: " + err);
@@ -309,7 +326,7 @@
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { 
-                facingMode: "user",
+                facingMode: faceFacingMode,
                 width: { ideal: 640 }, 
                 height: { ideal: 480 }
             } });
