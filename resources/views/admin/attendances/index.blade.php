@@ -10,6 +10,12 @@
             <h2 style="font-size: 1.125rem; font-weight: 600;">Log Absensi Siswa</h2>
             <p style="color: var(--text-muted); font-size: 0.875rem;">{{ $attendances->count() }} catatan kehadiran hari ini.</p>
         </div>
+        <div>
+            <a href="{{ route('admin.attendances.manual') }}" class="premium-button">
+                <i data-lucide="plus-circle"></i>
+                Input Sakit/Izin
+            </a>
+        </div>
         <div class="flex flex-col md:flex-row gap-3 w-full lg:w-auto">
             <form action="{{ route('admin.attendances.index') }}" method="GET" class="flex flex-col md:flex-row gap-2 flex-1">
                 <div class="search-container">
@@ -78,14 +84,24 @@
                     <td style="padding: 1rem; font-weight: 500;">{{ $attendance->student->name }}</td>
                     <td style="padding: 1rem;">{{ $attendance->student->class }}</td>
                     <td style="padding: 1rem;">
-                        <span class="status-badge {{ $attendance->status == 'Hadir' ? 'status-present' : 'status-late' }}">
+                        <span class="status-badge 
+                            {{ $attendance->status == 'Hadir' ? 'status-present' : '' }}
+                            {{ $attendance->status == 'Terlambat' ? 'status-late' : '' }}
+                            {{ $attendance->status == 'Sakit' ? 'status-sakit' : '' }}
+                            {{ $attendance->status == 'Izin' ? 'status-izin' : '' }}
+                        ">
                             {{ $attendance->status }}
                         </span>
                     </td>
                     <td style="padding: 1rem; color: var(--text-muted); font-size: 0.875rem;">
                         <span class="flex items-center gap-2">
-                            <i data-lucide="scan-face" style="width: 14px;"></i>
-                            Auto-Scan
+                            @if(in_array($attendance->status, ['Hadir', 'Terlambat']))
+                                <i data-lucide="scan-face" style="width: 14px;"></i>
+                                Auto-Scan
+                            @else
+                                <i data-lucide="user-cog" style="width: 14px;"></i>
+                                Manual (Piket)
+                            @endif
                         </span>
                     </td>
                 </tr>

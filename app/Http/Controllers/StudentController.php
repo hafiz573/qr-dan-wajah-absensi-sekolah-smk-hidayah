@@ -20,6 +20,7 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         $students = Student::query()
+            ->where('status', 'active')
             ->when($request->search, function ($query, $search) {
                 $query->where(function($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -33,7 +34,7 @@ class StudentController extends Controller
             ->orderBy('name')
             ->get();
 
-        $classes = Student::select('class')->distinct()->orderBy('class')->pluck('class');
+        $classes = Student::where('status', 'active')->select('class')->distinct()->orderBy('class')->pluck('class');
             
         return view('admin.students.index', compact('students', 'classes'));
     }
@@ -348,5 +349,45 @@ class StudentController extends Controller
             \Log::error('Gagal ekstrak gambar Excel: ' . $e->getMessage());
         }
         return null;
+    }
+
+    /**
+     * Display a listing of archived (graduated) students.
+     */
+    public function archive(Request $request)
+    {
+        $students = Student::query()
+            ->where('status', 'archived')
+            ->when($request->search, function ($query, $search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('nis', 'like', "%{$search}%");
+                });
+            })
+            ->when($request->class, function ($query, $class) {
+                $query->where('class', $class);
+            })
+            ->orderBy('class', 'desc')
+            ->orderBy('name')
+            ->get();
+
+        $classes = Student::where('status', 'archived')->select('class')->distinct()->orderBy('class')->pluck('class');
+            
+        return view('admin.students.archive', compact('students', 'classes'));
+    }
+
+    /**
+     * Restore student from archive to active status.
+     */
+    public function restore(Student $student)
+    {
+        $student->update(['status' => 'active']);
+        
+        // Remove "Lulus " prefix if exists
+        if (str_starts_with($student->class, 'Lulus ')) {
+            $student->update(['class' => str_replace('Lulus ', '', $student->class)]);
+        }
+
+        return redirect()->route('admin.students.archive')->with('success', 'Siswa berhasil dikembalikan ke daftar aktif.');
     }
 }

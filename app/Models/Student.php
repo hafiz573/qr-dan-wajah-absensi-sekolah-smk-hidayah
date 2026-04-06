@@ -14,6 +14,7 @@ class Student extends Model
         'qr_token',
         'photo',
         'face_descriptor',
+        'status',
     ];
 
     /**

@@ -32,6 +32,32 @@
         <p style="font-size: 0.75rem; margin-top: 1rem; color: var(--text-muted);">Siswa masuk setelah 07:00</p>
     </div>
 
+    <div class="glass-card p-6 border-l-4" style="border-left-color: #f97316;">
+        <div class="flex justify-between items-start">
+            <div>
+                <p style="color: var(--text-muted); font-size: 0.875rem;">Sakit</p>
+                <h3 style="font-size: 2rem; font-weight: 700; margin-top: 0.5rem;">{{ $stats['sakit'] ?? 0 }}</h3>
+            </div>
+            <div class="p-3" style="background: rgba(249, 115, 22, 0.1); border-radius: 0.75rem; color: #f97316;">
+                <i data-lucide="thermometer"></i>
+            </div>
+        </div>
+        <p style="font-size: 0.75rem; margin-top: 1rem; color: var(--text-muted);">Siswa sakit (input manual)</p>
+    </div>
+
+    <div class="glass-card p-6 border-l-4" style="border-left-color: #3b82f6;">
+        <div class="flex justify-between items-start">
+            <div>
+                <p style="color: var(--text-muted); font-size: 0.875rem;">Izin</p>
+                <h3 style="font-size: 2rem; font-weight: 700; margin-top: 0.5rem;">{{ $stats['izin'] ?? 0 }}</h3>
+            </div>
+            <div class="p-3" style="background: rgba(59, 130, 246, 0.1); border-radius: 0.75rem; color: #3b82f6;">
+                <i data-lucide="file-text"></i>
+            </div>
+        </div>
+        <p style="font-size: 0.75rem; margin-top: 1rem; color: var(--text-muted);">Siswa berkepentingan (manual)</p>
+    </div>
+
     <div class="glass-card p-6 border-l-4" style="border-left-color: var(--danger);">
         <div class="flex justify-between items-start">
             <div>
@@ -53,14 +79,24 @@
         <div class="space-y-4">
             @forelse($recent_attendances ?? [] as $item)
             <div class="flex items-center gap-4 p-3 rounded-lg" style="background: #ffffff; border: 1px solid var(--glass-border);">
-                <div style="width: 10px; height: 10px; border-radius: 50%; background: {{ $item->status == 'Hadir' ? 'var(--success)' : 'var(--warning)' }}"></div>
+                <div style="width: 10px; height: 10px; border-radius: 50%; background: 
+                    {{ $item->status == 'Hadir' ? 'var(--success)' : '' }}
+                    {{ $item->status == 'Terlambat' ? 'var(--warning)' : '' }}
+                    {{ $item->status == 'Sakit' ? '#f97316' : '' }}
+                    {{ $item->status == 'Izin' ? '#3b82f6' : '' }}
+                "></div>
                 <div style="flex: 1;">
                     <p style="font-weight: 600; font-size: 0.875rem; color: var(--text-main);">{{ $item->student->name }}</p>
                     <p style="font-size: 0.75rem; color: var(--text-muted);">Kelas {{ $item->student->class }}</p>
                 </div>
                 <div class="text-right">
                     <p style="font-weight: 500; font-size: 0.875rem;">{{ $item->time }}</p>
-                    <span class="status-badge {{ $item->status == 'Hadir' ? 'status-present' : 'status-late' }}">{{ $item->status }}</span>
+                    <span class="status-badge 
+                        {{ $item->status == 'Hadir' ? 'status-present' : '' }}
+                        {{ $item->status == 'Terlambat' ? 'status-late' : '' }}
+                        {{ $item->status == 'Sakit' ? 'status-sakit' : '' }}
+                        {{ $item->status == 'Izin' ? 'status-izin' : '' }}
+                    ">{{ $item->status }}</span>
                 </div>
             </div>
             @empty
@@ -92,6 +128,10 @@
             <a href="{{ route('admin.whatsapp.connect') }}" class="glass-card p-4 text-center hover:shadow-lg transition-all border-none quick-action-link" style="background: #ffffff; border: 1px solid #e2e8f0 !important;">
                 <i data-lucide="message-square" style="width: 2rem; height: 2rem; margin-bottom: 0.5rem; color: var(--primary);"></i>
                 <p style="font-size: 0.875rem; font-weight: 600; color: var(--text-main);">WA Connect</p>
+            </a>
+            <a href="{{ route('admin.attendances.manual') }}" class="glass-card p-4 text-center hover:shadow-lg transition-all border-none quick-action-link" style="background: #ffffff; border: 1px solid #e2e8f0 !important;">
+                <i data-lucide="edit-3" style="width: 2rem; height: 2rem; margin-bottom: 0.5rem; color: var(--primary);"></i>
+                <p style="font-size: 0.875rem; font-weight: 600; color: var(--text-main);">Catat Sakit/Izin</p>
             </a>
             <a href="{{ route('admin.settings.index') }}" class="glass-card p-4 text-center hover:shadow-lg transition-all border-none quick-action-link" style="background: #ffffff; border: 1px solid #e2e8f0 !important;">
                 <i data-lucide="settings" style="width: 2rem; height: 2rem; margin-bottom: 0.5rem; color: var(--primary);"></i>

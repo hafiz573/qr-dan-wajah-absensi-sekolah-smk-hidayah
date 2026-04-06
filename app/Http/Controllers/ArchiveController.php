@@ -108,7 +108,9 @@ class ArchiveController extends Controller
             $sheet->setCellValue('B1', 'NAMA');
             $sheet->setCellValue('C1', 'Hadir');
             $sheet->setCellValue('D1', 'Terlambat');
-            $sheet->setCellValue('E1', 'Alfa');
+            $sheet->setCellValue('E1', 'Sakit');
+            $sheet->setCellValue('F1', 'Izin');
+            $sheet->setCellValue('G1', 'Alfa');
 
             $classStudents = $students->where('class', $class);
             $row = 2;
@@ -126,14 +128,28 @@ class ArchiveController extends Controller
                     ->where('status', 'Terlambat')
                     ->count();
 
-                $alfa = $totalActiveDays - ($hadir + $terlambat);
+                $sakit = Attendance::where('student_id', $student->id)
+                    ->whereMonth('date', $month)
+                    ->whereYear('date', $year)
+                    ->where('status', 'Sakit')
+                    ->count();
+
+                $izin = Attendance::where('student_id', $student->id)
+                    ->whereMonth('date', $month)
+                    ->whereYear('date', $year)
+                    ->where('status', 'Izin')
+                    ->count();
+
+                $alfa = $totalActiveDays - ($hadir + $terlambat + $sakit + $izin);
                 if ($alfa < 0) $alfa = 0;
 
                 $sheet->setCellValue('A' . $row, $student->nis);
                 $sheet->setCellValue('B' . $row, $student->name);
                 $sheet->setCellValue('C' . $row, $hadir);
                 $sheet->setCellValue('D' . $row, $terlambat);
-                $sheet->setCellValue('E' . $row, $alfa);
+                $sheet->setCellValue('E' . $row, $sakit);
+                $sheet->setCellValue('F' . $row, $izin);
+                $sheet->setCellValue('G' . $row, $alfa);
                 $row++;
             }
         }

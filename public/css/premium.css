@@ -104,6 +104,8 @@ body {
 .status-present { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
 .status-late { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
 .status-absent { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+.status-sakit { background: #ffedd5; color: #9a3412; border: 1px solid #fed7aa; }
+.status-izin { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
 
 /* Animations */
 @keyframes fadeIn {

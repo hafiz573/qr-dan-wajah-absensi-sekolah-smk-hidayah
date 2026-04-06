@@ -30,9 +30,13 @@
                 <i data-lucide="layout-dashboard"></i>
                 Dashboard
             </a>
-            <a href="{{ route('admin.students.index') }}" class="nav-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.students.index') }}" class="nav-link {{ request()->routeIs('admin.students.index') || request()->routeIs('admin.students.create') || request()->routeIs('admin.students.edit') ? 'active' : '' }}">
                 <i data-lucide="users"></i>
                 Data Siswa
+            </a>
+            <a href="{{ route('admin.students.archive') }}" class="nav-link {{ request()->routeIs('admin.students.archive') ? 'active' : '' }}">
+                <i data-lucide="archive"></i>
+                Arsip Siswa
             </a>
             <a href="{{ route('admin.attendances.index') }}" class="nav-link {{ request()->routeIs('admin.attendances.index') ? 'active' : '' }}">
                 <i data-lucide="clipboard-list"></i>
