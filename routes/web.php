@@ -60,6 +60,7 @@ Route::prefix('admin')->group(function () {
             'date' => $request->date,
             'time' => \Carbon\Carbon::now()->toTimeString(),
             'status' => $request->status,
+            'method' => 'Manual Piket',
         ]);
 
         return redirect()->route('admin.attendances.index')->with('success', "Status {$request->status} berhasil dicatat.");

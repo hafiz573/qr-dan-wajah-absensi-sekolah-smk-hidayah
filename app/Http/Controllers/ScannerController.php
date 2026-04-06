@@ -27,6 +27,13 @@ class ScannerController extends Controller
             return response()->json(['success' => false, 'message' => 'Siswa Belum Mendaftarkan Wajah!']);
         }
 
+        // Check Closing Time
+        $now = Carbon::now();
+        $absentTime = Setting::get('time_absent', '08:00:00');
+        if ($now->format('H:i:s') > $absentTime) {
+            return response()->json(['success' => false, 'message' => 'Waktu Absensi Sudah Tutup! Silakan hubungi Guru Piket.']);
+        }
+
         return response()->json([
             'success' => true, 
             'student' => $student,
@@ -39,10 +46,14 @@ class ScannerController extends Controller
      */
     public function submitPresence(Request $request)
     {
-        $request->validate(['student_id' => 'required']);
+        $request->validate([
+            'student_id' => 'required',
+            'method' => 'string'
+        ]);
         
         $student = Student::findOrFail($request->student_id);
         $today = Carbon::today()->toDateString();
+        $method = $request->input('method', 'Scan QR');
         
         // Already absent?
         $existing = Attendance::where('student_id', $student->id)->where('date', $today)->first();
@@ -51,6 +62,13 @@ class ScannerController extends Controller
         }
 
         $now = Carbon::now();
+        $absentTime = Setting::get('time_absent', '08:00:00');
+        
+        // Block Scan QR if past closing time (as a safety precaution)
+        if ($method === 'Scan QR' && $now->format('H:i:s') > $absentTime) {
+            return response()->json(['success' => false, 'message' => 'Waktu Absensi Sudah Tutup!']);
+        }
+
         $lateTime = Setting::get('time_late', '07:00:00');
         $status = $now->format('H:i:s') > $lateTime ? 'Terlambat' : 'Hadir';
 
@@ -58,7 +76,8 @@ class ScannerController extends Controller
             'student_id' => $student->id,
             'date' => $today,
             'time' => $now->format('H:i:s'),
-            'status' => $status
+            'status' => $status,
+            'method' => $method
         ]);
 
         return response()->json([

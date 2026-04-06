@@ -95,12 +95,15 @@
                     </td>
                     <td style="padding: 1rem; color: var(--text-muted); font-size: 0.875rem;">
                         <span class="flex items-center gap-2">
-                            @if(in_array($attendance->status, ['Hadir', 'Terlambat']))
-                                <i data-lucide="scan-face" style="width: 14px;"></i>
-                                Auto-Scan
+                            @if($attendance->method == 'Scan QR')
+                                <i data-lucide="scan" style="width: 14px; color: var(--primary);"></i>
+                                {{ $attendance->method }}
+                            @elseif($attendance->method == 'Manual Guru')
+                                <i data-lucide="shield-check" style="width: 14px; color: var(--warning);"></i>
+                                {{ $attendance->method }}
                             @else
-                                <i data-lucide="user-cog" style="width: 14px;"></i>
-                                Manual (Piket)
+                                <i data-lucide="user-cog" style="width: 14px; color: #64748b;"></i>
+                                {{ $attendance->method ?? 'Manual Piket' }}
                             @endif
                         </span>
                     </td>

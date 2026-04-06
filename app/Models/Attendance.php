@@ -12,6 +12,7 @@ class Attendance extends Model
         'date',
         'time',
         'status',
+        'method',
     ];
 
     /**

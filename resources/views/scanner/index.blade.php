@@ -410,7 +410,7 @@
 
     let isSubmitting = false;
 
-    async function submitAttendance(id) {
+    async function submitAttendance(id, method = 'Scan QR') {
         if (isSubmitting) return;
         isSubmitting = true;
         
@@ -424,7 +424,10 @@
         const response = await fetch('/scanner/submit-presence', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            body: JSON.stringify({ student_id: id })
+            body: JSON.stringify({ 
+                student_id: id,
+                method: method
+            })
         });
         const data = await response.json();
         
@@ -532,7 +535,7 @@
         const selectedOption = document.getElementById('manual-student').options[document.getElementById('manual-student').selectedIndex];
         document.getElementById('found-class').innerText = selectedOption.text;
         
-        await submitAttendance(studentId);
+        await submitAttendance(studentId, 'Manual Guru');
     };
 
     resetBtn.onclick = () => location.reload();
