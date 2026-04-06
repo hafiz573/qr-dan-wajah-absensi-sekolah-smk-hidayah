@@ -104,25 +104,34 @@ Route::prefix('admin')->group(function () {
             'time_absent' => \App\Models\Setting::get('time_absent', '08:00:00'),
             'timezone' => \App\Models\Setting::get('timezone', 'Asia/Jakarta'),
             'report_time' => \App\Models\Setting::get('report_time', '08:00:00'),
+            'time_out_start' => \App\Models\Setting::get('time_out_start', '14:00:00'),
+            'time_out_end' => \App\Models\Setting::get('time_out_end', '17:00:00'),
+            'report_time_out' => \App\Models\Setting::get('report_time_out', '17:00:00'),
             'school_type' => \App\Models\Setting::get('school_type', 'SMK'),
         ];
         return view('admin.settings.index', compact('settings'));
     })->name('admin.settings.index');
 
-    Route::post('/settings', function(\Illuminate\Http\Request $request) {
-        $request->validate([
+    Route::post('/settings', function (\Illuminate\Http\Request $request) {
+        $data = $request->validate([
             'time_late' => 'required',
             'time_absent' => 'required',
             'report_time' => 'required|after_or_equal:time_absent',
+            'time_out_start' => 'required',
+            'time_out_end' => 'required|after:time_out_start',
+            'report_time_out' => 'required|after_or_equal:time_out_end',
             'timezone' => 'required',
             'school_type' => 'required',
         ], [
-            'report_time.after_or_equal' => 'Waktu Kirim Laporan WA tidak boleh lebih awal dari Batas Waktu Alfa (Tutup Absen).'
+            'report_time.after_or_equal' => 'Waktu Kirim Laporan WA tidak boleh lebih awal dari Batas Waktu Alfa (Tutup Absen).',
+            'time_out_end.after' => 'Waktu Selesai Scan Pulang harus setelah Waktu Mulai Scan Pulang.',
+            'report_time_out.after_or_equal' => 'Waktu Kirim Laporan WA Pulang tidak boleh lebih awal dari Selesai Scan Pulang.'
         ]);
 
-        foreach($request->except('_token') as $key => $value) {
+        foreach ($request->except('_token') as $key => $value) {
             \App\Models\Setting::updateOrCreate(['key' => $key], ['value' => $value]);
         }
+
         return redirect()->back()->with('success', 'Pengaturan berhasil disimpan.');
     })->name('admin.settings.update');
 
@@ -153,6 +162,11 @@ Route::get('/scanner', function() {
     $students = \App\Models\Student::orderBy('name', 'asc')->get();
     return view('scanner.index', compact('students'));
 })->name('scanner.index');
+
+Route::get('/scanner-pulang', function() {
+    $students = \App\Models\Student::orderBy('name', 'asc')->get();
+    return view('scanner.pulang', compact('students'));
+})->name('scanner.pulang');
 
 Route::post('/scanner/validate-qr', [App\Http\Controllers\ScannerController::class, 'validateQR'])->name('scanner.validate-qr');
 Route::post('/scanner/submit-presence', [App\Http\Controllers\ScannerController::class, 'submitPresence'])->name('scanner.submit-presence');

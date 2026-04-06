@@ -50,6 +50,10 @@
                 <i data-lucide="qr-code"></i>
                 Halaman Scanner
             </a>
+            <a href="{{ route('scanner.pulang') }}" class="nav-link {{ request()->routeIs('scanner.pulang') ? 'active' : '' }}">
+                <i data-lucide="log-out"></i>
+                Scanner Pulang
+            </a>
             <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.index') ? 'active' : '' }}">
                 <i data-lucide="settings"></i>
                 Pengaturan

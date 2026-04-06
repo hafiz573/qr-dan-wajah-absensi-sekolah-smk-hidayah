@@ -75,13 +75,46 @@
 
         <div class="mb-6">
             <label style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">
-                Waktu Kirim Laporan WA Otomatis
+                Waktu Kirim Laporan WA Otomatis (Pagi)
             </label>
             <input type="time" name="report_time" value="{{ $settings['report_time'] }}" class="glass-card @error('report_time') border-danger @enderror" style="width: 100%; padding: 0.75rem 1rem; outline: none;" step="1" required>
             @error('report_time')
                 <p style="color: var(--danger); font-size: 0.75rem; margin-top: 0.25rem;">{{ $message }}</p>
             @enderror
-            <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem;">Waktu sistem akan mengirim laporan harian ke semua Wali Kelas secara bertahap.</p>
+            <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem;">Waktu sistem akan mengirim laporan harian pagi ke semua Wali Kelas.</p>
+        </div>
+
+        <div style="margin: 2rem 0; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--primary);">Sesi Kepulangan (Sore)</h3>
+            
+            <div class="mb-4">
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">
+                    Waktu Mulai Scan Pulang
+                </label>
+                <input type="time" name="time_out_start" value="{{ $settings['time_out_start'] }}" class="glass-card" style="width: 100%; padding: 0.75rem 1rem; outline: none;" step="1" required>
+                <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem;">Siswa baru bisa scan pulang setelah waktu ini.</p>
+            </div>
+
+            <div class="mb-4">
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">
+                    Waktu Selesai Scan Pulang
+                </label>
+                <input type="time" name="time_out_end" value="{{ $settings['time_out_end'] }}" class="glass-card @error('time_out_end') border-danger @enderror" style="width: 100%; padding: 0.75rem 1rem; outline: none;" step="1" required>
+                @error('time_out_end')
+                    <p style="color: var(--danger); font-size: 0.75rem; margin-top: 0.25rem;">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-6">
+                <label style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">
+                    Waktu Kirim Laporan WA Otomatis (Pulang)
+                </label>
+                <input type="time" name="report_time_out" value="{{ $settings['report_time_out'] }}" class="glass-card @error('report_time_out') border-danger @enderror" style="width: 100%; padding: 0.75rem 1rem; outline: none;" step="1" required>
+                @error('report_time_out')
+                    <p style="color: var(--danger); font-size: 0.75rem; margin-top: 0.25rem;">{{ $message }}</p>
+                @enderror
+                <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem;">Waktu sistem akan mengirim laporan kepulangan ke Wali Kelas.</p>
+            </div>
         </div>
 
         <div class="flex gap-4 p-4 rounded-lg bg-blue-50 border border-blue-100 mb-6" style="background: rgba(37, 99, 235, 0.05);">

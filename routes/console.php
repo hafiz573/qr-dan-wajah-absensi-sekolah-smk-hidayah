@@ -13,4 +13,7 @@ use App\Models\Setting;
 Schedule::command('app:send-daily-attendance-report')
     ->dailyAt(Setting::get('report_time', '08:00'));
 
+Schedule::command('app:send-afternoon-attendance-report')
+    ->dailyAt(Setting::get('report_time_out', '17:00'));
+
 Schedule::command('students:promote')->yearlyOn(7, 1);

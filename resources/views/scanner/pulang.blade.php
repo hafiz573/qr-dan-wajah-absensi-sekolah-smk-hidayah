@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Scanner Kehadiran')
-@section('header_title', 'Sistem Scan QR & Wajah')
+@section('title', 'Scanner Kepulangan')
+@section('header_title', 'Sistem Scan Pulang (QR & Wajah)')
 
 @section('content')
 <div class="max-w-7xl mx-auto">
@@ -49,7 +49,7 @@
                 <div class="glass-card p-4 flex items-center gap-3" style="border-color: var(--primary);">
                     <i data-lucide="info" style="color: var(--primary);"></i>
                     <div>
-                        <p id="msg-title" style="font-weight: 600; font-size: 0.875rem;">Status Scan</p>
+                        <p id="msg-title" style="font-weight: 600; font-size: 0.875rem;">Status Scan Pulang</p>
                         <p id="msg-desc" style="font-size: 0.75rem; color: var(--text-muted);">Menunggu input...</p>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
             <p id="found-class" style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem;">Siswa / Kelas</p>
             
             <div style="background: rgba(253,186,116,0.1); padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--warning); margin-bottom: 1.5rem;">
-                <p style="font-size: 0.75rem; font-weight: 600; color: var(--warning);">Validasi Kehadiran</p>
+                <p style="font-size: 0.75rem; font-weight: 600; color: var(--warning);">Validasi Kepulangan</p>
                 <p style="font-size: 0.8125rem; color: var(--text-muted);">Menunggu verifikasi wajah...</p>
             </div>
         </div>
@@ -98,8 +98,8 @@
 <!-- Modal Guru Backup (Simple Overlay) -->
 <div id="guru-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: none; align-items: center; justify-content: center;">
     <div class="glass-card p-6" style="width: 400px;">
-        <h3 class="mb-4">Mode Input Manual</h3>
-        <p class="mb-4" style="font-size: 0.875rem; color: var(--text-muted);">Guru dapat memasukkan absensi siswa jika sistem otomatis bermasalah.</p>
+        <h3 class="mb-4">Mode Input Manual (Pulang)</h3>
+        <p class="mb-4" style="font-size: 0.875rem; color: var(--text-muted);">Guru dapat memasukkan data pulang siswa jika sistem otomatis bermasalah.</p>
         <div class="mb-4">
             <select id="manual-student" class="glass-card" style="width: 100%; padding: 0.75rem; outline: none;">
                 <option value="">Pilih Siswa...</option>
@@ -109,10 +109,9 @@
             </select>
         </div>
         <div class="flex gap-2">
-            <button id="save-manual" class="premium-button" style="flex: 1;">Simpan</button>
+            <button id="save-manual" class="premium-button" style="flex: 1;">Simpan Pulang</button>
             <button id="close-guru" class="nav-link" style="padding: 0.5rem; margin: 0; background: #f1f5f9; border: 1px solid #e2e8f0;">Tutup</button>
         </div>
-    </div>
     </div>
 </div>
 
@@ -122,8 +121,8 @@
         <div class="mb-6" style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; border: 2px solid var(--success);">
             <i data-lucide="check" style="width: 40px; height: 40px; color: var(--success);"></i>
         </div>
-        <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--success);">ABSENSI BERHASIL!</h2>
-        <p style="color: var(--text-muted); margin-bottom: 2rem;">Selamat belajar, selamat beraktivitas!</p>
+        <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--success);">SCAN PULANG BERHASIL!</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">Hati-hati di jalan, sampai jumpa besok!</p>
         
         <div class="glass-card p-6 mb-8" style="background: rgba(255,255,255,0.03);">
             <h3 id="success-name" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.25rem;">Nama Siswa</h3>
@@ -136,14 +135,15 @@
         </div>
     </div>
 </div>
+
 <!-- Warning Modal (Already Absent) -->
 <div id="warning-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(15px); z-index: 2000; display: none; align-items: center; justify-content: center;">
     <div class="glass-card p-10 text-center animate-fade-in" style="width: 500px; border-color: var(--warning);">
         <div class="mb-6" style="width: 80px; height: 80px; background: rgba(251, 191, 36, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto; border: 2px solid var(--warning);">
             <i data-lucide="alert-triangle" style="width: 40px; height: 40px; color: var(--warning);"></i>
         </div>
-        <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--warning);">SUDAH ABSEN!</h2>
-        <p id="warning-message" style="color: var(--text-muted); margin-bottom: 2rem;">Anda sudah melakukan absensi untuk hari ini.</p>
+        <h2 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--warning);">SUDAH SCAN PULANG!</h2>
+        <p id="warning-message" style="color: var(--text-muted); margin-bottom: 2rem;">Anda sudah melakukan scan pulang untuk hari ini.</p>
         
         <div class="glass-card p-6 mb-8" style="background: #f8fafc; border: 1px solid var(--glass-border);">
             <h3 id="warning-name" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.25rem; color: var(--text-main);">Nama Siswa</h3>
@@ -155,6 +155,7 @@
         </div>
     </div>
 </div>
+
 <!-- Error Modal (QR Failed / Connection Error) -->
 <div id="error-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(15px); z-index: 2000; display: none; align-items: center; justify-content: center;">
     <div class="glass-card p-10 text-center animate-fade-in" style="width: 500px; border-color: var(--danger);">
@@ -221,7 +222,6 @@
     async function initFaceAPI() {
         if (modelsLoaded) return true;
         try {
-            // Menggunakan jsDelivr CDN yang lebih stabil dan mendukung CORS untuk lingkungan lokal
             const MODEL_URL = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights/';
             await Promise.all([
                 faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
@@ -230,7 +230,6 @@
                 faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
             ]);
             modelsLoaded = true;
-            console.log("Models loaded successfully");
             return true;
         } catch (err) {
             console.error("Failed to load models:", err);
@@ -276,30 +275,29 @@
     function startQRScanner() {
         scanner = new Html5Qrcode("reader");
         scanner.start({ facingMode: qrFacingMode }, {
-            fps: 15, // Ditingkatkan untuk respon lebih cepat
+            fps: 15,
         }, onScanSuccess).catch(err => {
             alert("Kesalahan Kamera: " + err);
         });
         
         document.getElementById('scan-hint').style.display = 'block';
-        document.getElementById('scan-hint').innerHTML = `<span class="glass-card p-3">Tunjukkan <strong style="color: var(--primary);">QR CODE</strong> di mana saja ke Kamera</span>`;
+        document.getElementById('scan-hint').innerHTML = `<span class="glass-card p-3">Tunjukkan <strong style="color: var(--primary);">QR CODE</strong> Anda ke Kamera</span>`;
     }
 
     async function onScanSuccess(decodedText) {
         if (isProcessing) return;
         isProcessing = true;
         
-        // Reset variables for new session
         identifiedStudentId = null;
         targetDescriptor = null;
         
-        showLoader("Memvalidasi QR...");
+        showLoader("Memvalidasi QR Pulang...");
         
         try {
             const response = await fetch('/scanner/validate-qr', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                body: JSON.stringify({ token: decodedText })
+                body: JSON.stringify({ token: decodedText, type: 'Pulang' })
             });
             const data = await response.json();
 
@@ -308,9 +306,8 @@
                 targetDescriptor = new Float32Array(data.face_descriptor);
                 
                 showStudentInfo(data.student);
-                showStatus("QR TERDETEKSI", "Lanjutkan dengan Scan Wajah", "var(--success)");
+                showStatus("QR TERDETEKSI", "Lanjutkan dengan Scan Wajah Pulang", "var(--success)");
                 
-                // Stop QR, Start Face
                 await scanner.stop();
                 startFaceVerification();
             } else {
@@ -329,9 +326,8 @@
         document.getElementById('reader').style.display = 'none';
         faceVideo.style.display = 'block';
         document.getElementById('scan-hint').style.display = 'block';
-        document.getElementById('scan-hint').innerHTML = `<span class="glass-card p-3" style="border-color: var(--warning);">Tatap Kamera untuk <strong style="color: var(--warning);">SCAN WAJAH</strong></span>`;
+        document.getElementById('scan-hint').innerHTML = `<span class="glass-card p-3" style="border-color: var(--warning);">Tatap Kamera untuk <strong style="color: var(--warning);">SCAN WAJAH PULANG</strong></span>`;
 
-        // Pastikan model sudah siap
         if (!modelsLoaded) {
             showLoader("Menyiapkan Sensor AI...");
             const ready = await initFaceAPI();
@@ -361,14 +357,12 @@
         } catch (err) {
             hideLoader();
             showStatus("Gagal Kamera", "Kamera tidak dapat diakses untuk scan wajah.", "var(--danger)");
-            console.error(err);
             resetBtn.style.display = 'inline-flex';
             return;
         }
 
         updateHint("scan", "Menunggu Wajah...", "var(--primary)");
 
-        // Loop for recognition - Optimized Interval (250ms)
         const loop = setInterval(async () => {
             try {
                 if (!identifiedStudentId) {
@@ -378,14 +372,12 @@
 
                 if (faceVideo.paused || faceVideo.ended) return;
 
-                // 1. Check Brightness
                 const brightness = getBrightness(faceVideo);
-                if (brightness < 35) { // Sedikit dilonggarkan dari 40
+                if (brightness < 35) {
                     updateHint("sun-off", "Terlalu Gelap!", "var(--warning)");
                     return;
                 }
 
-                // 2. Detect Face - Dilonggarkan scoreThreshold agar lebih sensitif
                 const detection = await faceapi.detectSingleFace(
                     faceVideo, 
                     new faceapi.TinyFaceDetectorOptions({ inputSize: 160, scoreThreshold: 0.4 })
@@ -396,22 +388,14 @@
                     return;
                 }
 
-                // 3. Check Distance (Face Box size)
                 const box = detection.detection.box;
-                if (box.width < 100) { // Dilonggarkan dari 120
+                if (box.width < 100) {
                     updateHint("maximize-2", "Mendekat ke Kamera", "var(--warning)");
-                    return;
-                }
-
-                // 4. Compare with target
-                if (!targetDescriptor) {
-                    updateHint("alert-circle", "Data Wajah Error", "var(--danger)");
                     return;
                 }
 
                 const distance = faceapi.euclideanDistance(detection.descriptor, targetDescriptor);
                 
-                // Menggunakan 0.42 sebagai jalan tengah keamanan & kemudahan
                 if (distance < 0.42) { 
                     updateHint("check-circle", "Wajah Cocok!", "var(--success)");
                     clearInterval(loop);
@@ -421,9 +405,8 @@
                 }
             } catch (err) {
                 console.error("Face Loop Error:", err);
-                updateHint("alert-triangle", "Sensor Error", "var(--danger)");
             }
-        }, 250); // Sedikit diperlambat agar browser tidak berat
+        }, 250);
     }
 
     let isSubmitting = false;
@@ -432,69 +415,70 @@
         if (isSubmitting) return;
         isSubmitting = true;
         
-        showLoader("Menyimpan Kehadiran...");
+        showLoader("Menyimpan Data Pulang...");
         
-        // Stop Camera Streams
         if (faceVideo.srcObject) {
             faceVideo.srcObject.getTracks().forEach(track => track.stop());
         }
         
-        const response = await fetch('/scanner/submit-presence', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-            body: JSON.stringify({ 
-                student_id: id,
-                method: method
-            })
-        });
-        const data = await response.json();
-        
-        hideLoader();
-        if (data.success) {
-            // ... Success Logic ...
-            const modal = document.getElementById('success-modal');
-            document.getElementById('success-name').innerText = data.student_name;
-            document.getElementById('success-class').innerText = document.getElementById('found-class').innerText;
-            document.getElementById('success-time').innerText = new Date().toLocaleTimeString('id-id');
-            modal.style.display = 'flex';
+        try {
+            const response = await fetch('/scanner/submit-presence', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({ 
+                    student_id: id,
+                    method: method,
+                    type: 'Pulang'
+                })
+            });
+            const data = await response.json();
             
-            // Countdown 1s
-            let count = 1;
-            const timer = document.getElementById('timer');
-            const interval = setInterval(() => {
-                count--;
-                timer.innerText = count;
-                if (count <= 0) {
-                    clearInterval(interval);
-                    location.reload();
-                }
-            }, 1000);
+            hideLoader();
+            if (data.success) {
+                const modal = document.getElementById('success-modal');
+                document.getElementById('success-name').innerText = data.student_name;
+                document.getElementById('success-class').innerText = document.getElementById('found-class').innerText;
+                document.getElementById('success-time').innerText = new Date().toLocaleTimeString('id-id');
+                modal.style.display = 'flex';
+                
+                let count = 2;
+                const timer = document.getElementById('timer');
+                const interval = setInterval(() => {
+                    count--;
+                    timer.innerText = count;
+                    if (count <= 0) {
+                        clearInterval(interval);
+                        location.reload();
+                    }
+                }, 1000);
 
-        } else if (data.message.includes('Sudah Melakukan Absensi')) {
-            // Show Warning Modal for already absent
-            const modal = document.getElementById('warning-modal');
-            document.getElementById('warning-name').innerText = document.getElementById('found-name').innerText || 'Siswa';
-            modal.style.display = 'flex';
-            
-            // Countdown 1s
-            let count = 1;
-            const timer = document.getElementById('w-timer');
-            const interval = setInterval(() => {
-                count--;
-                timer.innerText = count;
-                if (count <= 0) {
-                    clearInterval(interval);
-                    location.reload();
-                }
-            }, 1000);
-        } else {
-            showStatus("GAGAL", data.message, "var(--danger)");
-            resetBtn.style.display = 'inline-flex';
-            isSubmitting = false; // Allow retry if error other than "already absent"
+            } else if (data.message.includes('Sudah Melakukan Scan')) {
+                const modal = document.getElementById('warning-modal');
+                document.getElementById('warning-name').innerText = document.getElementById('found-name').innerText || 'Siswa';
+                modal.style.display = 'flex';
+                
+                let count = 2;
+                const timer = document.getElementById('w-timer');
+                const interval = setInterval(() => {
+                    count--;
+                    timer.innerText = count;
+                    if (count <= 0) {
+                        clearInterval(interval);
+                        location.reload();
+                    }
+                }, 1000);
+            } else {
+                showStatus("GAGAL", data.message, "var(--danger)");
+                resetBtn.style.display = 'inline-flex';
+                isSubmitting = false;
+            }
+        } catch (e) {
+            showStatus("Gagal Koneksi", "Kesalahan saat menyimpan data.", "var(--danger)");
+            isSubmitting = false;
+            hideLoader();
         }
     }
 
-    // UI Helpers
     function showLoader(text) {
         loaderText.innerText = text;
         loader.style.display = 'flex';
@@ -502,8 +486,7 @@
     function hideLoader() { loader.style.display = 'none'; }
 
     function showStatus(title, desc, color) {
-        // Jika status adalah error (merah), tampilkan modal
-        if (color === 'var(--danger)' || title.includes('GAGAL') || title.includes('Gagal')) {
+        if (color === 'var(--danger)' || title.includes('GAGAL')) {
             document.getElementById('error-title').innerText = title;
             document.getElementById('error-desc').innerText = desc;
             document.getElementById('error-modal').style.display = 'flex';
@@ -519,7 +502,7 @@
 
     function closeErrorModal() {
         document.getElementById('error-modal').style.display = 'none';
-        location.reload(); // Reload untuk reset scanner state
+        location.reload();
     }
 
     function showStudentInfo(student) {
@@ -534,7 +517,6 @@
         }
     }
 
-    // Modal Guru Handlers
     document.getElementById('guru-backup').onclick = () => document.getElementById('guru-modal').style.display = 'flex';
     document.getElementById('close-guru').onclick = () => document.getElementById('guru-modal').style.display = 'none';
     
@@ -544,20 +526,13 @@
             alert('Pilih siswa terlebih dahulu!');
             return;
         }
-        
         document.getElementById('guru-modal').style.display = 'none';
-        
-        // Use standard success modal path
-        // We temporarily set text for the success modal because manual submit 
-        // doesn't fill 'found-class' label.
         const selectedOption = document.getElementById('manual-student').options[document.getElementById('manual-student').selectedIndex];
         document.getElementById('found-class').innerText = selectedOption.text;
-        
         await submitAttendance(studentId, 'Manual Guru');
     };
 
     resetBtn.onclick = () => location.reload();
-
     startQRScanner();
     lucide.createIcons();
 </script>
