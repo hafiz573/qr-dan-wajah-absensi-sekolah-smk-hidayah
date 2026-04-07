@@ -56,16 +56,56 @@ class SendDailyAttendanceReport extends Command
                 continue;
             }
 
-            $message = "Status Absensi Hari ini ({$dateFormatted})\n\n";
+            $message = "*Status Absensi Hari ini* ({$dateFormatted})\n";
+            $message .= "Kelas: {$contact->class_name}\n";
+            $message .= "----------------------------------\n\n";
+
+            $categories = [
+                'Hadir' => [],
+                'Terlambat' => [],
+                'Sakit' => [],
+                'Izin' => [],
+                'Alfa' => [],
+            ];
 
             foreach ($students as $student) {
                 $attendance = Attendance::where('student_id', $student->id)
                     ->where('date', $today)
+                    ->where('type', 'Masuk')
                     ->first();
 
                 $status = $attendance ? $attendance->status : 'Alfa';
-                $message .= "{$student->name}, {$student->class}, {$status}.\n";
+                
+                if (array_key_exists($status, $categories)) {
+                    $categories[$status][] = $student->name;
+                } else {
+                    $categories['Alfa'][] = $student->name;
+                }
             }
+
+            $icons = [
+                'Hadir' => '✅',
+                'Terlambat' => '⚠️',
+                'Sakit' => 'ℹ️',
+                'Izin' => 'ℹ️',
+                'Alfa' => '❌',
+            ];
+
+            $hasAnyCategory = false;
+            foreach ($categories as $status => $names) {
+                if (!empty($names)) {
+                    $hasAnyCategory = true;
+                    $icon = $icons[$status] ?? '•';
+                    $message .= "{$icon} *{$status}:*\n";
+                    foreach ($names as $idx => $name) {
+                        $num = $idx + 1;
+                        $message .= "{$num}. {$name}\n";
+                    }
+                    $message .= "\n";
+                }
+            }
+
+            $message .= "Laporan otomatis By AbsensiPro";
 
             // Send to WhatsApp Bridge
             try {

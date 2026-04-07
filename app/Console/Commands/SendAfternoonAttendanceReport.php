@@ -56,36 +56,68 @@ class SendAfternoonAttendanceReport extends Command
                 continue;
             }
 
-            $message = "*Laporan Kepulangan Hari ini* ({$dateFormatted})\n\n";
+            $message = "*Laporan Kepulangan Hari ini* ({$dateFormatted})\n";
             $message .= "Kelas: {$contact->class_name}\n";
             $message .= "----------------------------------\n\n";
 
+            $categories = [
+                'Sudah Scan Pulang' => [],
+                'Belum Scan Pulang' => [],
+                'Sakit' => [],
+                'Izin' => [],
+                'Alfa' => [],
+            ];
+
             foreach ($students as $student) {
-                $attendance = Attendance::where('student_id', $student->id)
+                $pulang = Attendance::where('student_id', $student->id)
                     ->where('date', $today)
                     ->where('type', 'Pulang')
                     ->first();
 
-                if ($attendance) {
-                    $status = $attendance->status;
-                    $time = $attendance->time;
-                    $message .= "✅ {$student->name}: {$status} ({$time})\n";
+                if ($pulang) {
+                    $categories['Sudah Scan Pulang'][] = "{$student->name} ({$pulang->time})";
                 } else {
-                    // Check if they were even here in the morning
-                    $morning = Attendance::where('student_id', $student->id)
+                    $masuk = Attendance::where('student_id', $student->id)
                         ->where('date', $today)
                         ->where('type', 'Masuk')
                         ->first();
                     
-                    if (!$morning || $morning->status === 'Alfa') {
-                        $message .= "❌ {$student->name}: Tidak Hadir (Tanpa Scan Pulang)\n";
+                    $status = $masuk ? $masuk->status : 'Alfa';
+
+                    if ($status === 'Sakit') {
+                        $categories['Sakit'][] = $student->name;
+                    } elseif ($status === 'Izin') {
+                        $categories['Izin'][] = $student->name;
+                    } elseif ($status === 'Alfa') {
+                        $categories['Alfa'][] = $student->name;
                     } else {
-                        $message .= "⚠️ {$student->name}: Bolos / Belum Scan Pulang\n";
+                        // For statuses 'Hadir' or 'Terlambat' who haven't scanned out
+                        $categories['Belum Scan Pulang'][] = $student->name;
                     }
                 }
             }
 
-            $message .= "\n_Laporan otomatis oleh Sistem Absensi SMK Hidayah_";
+            $icons = [
+                'Sudah Scan Pulang' => '✅',
+                'Belum Scan Pulang' => '⚠️',
+                'Sakit' => 'ℹ️',
+                'Izin' => 'ℹ️',
+                'Alfa' => '❌',
+            ];
+
+            foreach ($categories as $status => $names) {
+                if (!empty($names)) {
+                    $icon = $icons[$status] ?? '•';
+                    $message .= "{$icon} *{$status}:*\n";
+                    foreach ($names as $idx => $name) {
+                        $num = $idx + 1;
+                        $message .= "{$num}. {$name}\n";
+                    }
+                    $message .= "\n";
+                }
+            }
+
+            $message .= "Laporan otomatis By AbsensiPro";
 
             // Send to WhatsApp Bridge
             try {
