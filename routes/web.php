@@ -108,6 +108,7 @@ Route::prefix('admin')->group(function () {
             'time_out_end' => \App\Models\Setting::get('time_out_end', '17:00:00'),
             'report_time_out' => \App\Models\Setting::get('report_time_out', '17:00:00'),
             'school_type' => \App\Models\Setting::get('school_type', 'SMK'),
+            'hari_libur' => json_decode(\App\Models\Setting::get('hari_libur', '[]'), true),
         ];
         return view('admin.settings.index', compact('settings'));
     })->name('admin.settings.index');
@@ -122,13 +123,22 @@ Route::prefix('admin')->group(function () {
             'report_time_out' => 'required|after_or_equal:time_out_end',
             'timezone' => 'required',
             'school_type' => 'required',
+            'hari_libur' => 'nullable|array',
         ], [
             'report_time.after_or_equal' => 'Waktu Kirim Laporan WA tidak boleh lebih awal dari Batas Waktu Alfa (Tutup Absen).',
             'time_out_end.after' => 'Waktu Selesai Scan Pulang harus setelah Waktu Mulai Scan Pulang.',
             'report_time_out.after_or_equal' => 'Waktu Kirim Laporan WA Pulang tidak boleh lebih awal dari Selesai Scan Pulang.'
         ]);
 
-        foreach ($request->except('_token') as $key => $value) {
+        $requestData = $request->except('_token');
+        if (!isset($requestData['hari_libur'])) {
+            $requestData['hari_libur'] = [];
+        }
+
+        foreach ($requestData as $key => $value) {
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
             \App\Models\Setting::updateOrCreate(['key' => $key], ['value' => $value]);
         }
 

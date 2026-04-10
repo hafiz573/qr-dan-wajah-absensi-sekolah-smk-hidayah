@@ -41,6 +41,17 @@ class SendDailyAttendanceReport extends Command
             return;
         }
 
+        // Cek Hari Libur
+        $hariLiburJson = Setting::get('hari_libur', '[]');
+        $hariLiburArray = json_decode($hariLiburJson, true) ?? [];
+        
+        $hariIni = Carbon::now()->locale('id')->isoFormat('dddd'); // Menghasilkan 'Senin', 'Selasa', dst.
+
+        if (in_array($hariIni, $hariLiburArray)) {
+            $this->info("Hari ini ({$hariIni}) adalah hari libur. Laporan tidak dikirim.");
+            return;
+        }
+
         $today = Carbon::today()->toDateString();
         $dateFormatted = Carbon::today()->translatedFormat('d F Y');
 

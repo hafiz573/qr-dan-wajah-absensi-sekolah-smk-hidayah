@@ -4,6 +4,54 @@
 @section('header_title', 'Konfigurasi Sistem')
 
 @section('content')
+@push('styles')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<style>
+    /* Styling agar match dengan tema AbsensiPro/Glassmorphism */
+    .choices[data-type*="select-multiple"] .choices__inner {
+        background: #ffffff; /* Latar belakang disolidkan sedikit agar teks kontras */
+        border: 1px solid #cbd5e1 !important; /* Border abu-abu jelas */
+        border-radius: 0.5rem;
+        padding: 0.35rem 0.75rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Sedikit bayangan agar menonjol */
+        color: #1e293b !important;
+    }
+    .choices__inner {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+    .choices[data-type*="select-multiple"] .choices__input {
+        color: #1e293b !important; /* Paksa input teks berwarna gelap */
+        background-color: transparent !important;
+        margin-bottom: 0;
+    }
+    .choices__input::placeholder {
+        color: #64748b !important; /* Warna abu-abu gelap untuk placeholder */
+        opacity: 1;
+    }
+    .choices__list--dropdown {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        color: #1e293b;
+        z-index: 50;
+    }
+    .choices__list--multiple .choices__item {
+        background-color: var(--primary, #3b82f6);
+        border: none;
+        border-radius: 6px;
+        padding: 4px 10px;
+        color: #ffffff;
+        font-size: 0.875rem;
+    }
+    .choices__list--dropdown .choices__item--selectable.is-highlighted {
+        background-color: #f1f5f9;
+        color: #1e293b;
+    }
+</style>
+@endpush
 <div class="glass-card p-6" style="max-width: 600px; margin: 0 auto;">
     <div class="mb-6">
         <h2 style="font-size: 1.125rem; font-weight: 600;">Pengaturan Waktu Absensi</h2>
@@ -71,6 +119,26 @@
                 <option value="SMK" {{ ($settings['school_type'] ?? 'SMK') == 'SMK' ? 'selected' : '' }}>SMK/SMA (Kelas X - XII)</option>
             </select>
             <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem;">Menentukan batas kenaikan kelas (SD:6, SMP:9, SMK:12).</p>
+        </div>
+
+        <div class="mb-4">
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">
+                Hari Libur (Laporan WA Tidak Dikirim)
+            </label>
+            @php
+                $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                $selectedDays = $settings['hari_libur'] ?? [];
+                if (!is_array($selectedDays)) $selectedDays = [];
+            @endphp
+            <select name="hari_libur[]" multiple class="choices-multiple" style="width: 100%;">
+                <option value="">Pilih hari libur...</option>
+                @foreach($days as $day)
+                    <option value="{{ $day }}" {{ in_array($day, $selectedDays) ? 'selected' : '' }}>
+                        {{ $day }}
+                    </option>
+                @endforeach
+            </select>
+            <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.25rem;">Klik untuk menambahkan hari libur. Laporan laporan otomatis tidak akan dikirim di hari tersebut.</p>
         </div>
 
         <div class="mb-6">
@@ -148,3 +216,19 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const element = document.querySelector('.choices-multiple');
+        const choices = new Choices(element, {
+            removeItemButton: true,
+            searchEnabled: false,
+            placeholder: true,
+            placeholderValue: 'Pilih hari libur...',
+            itemSelectText: '',
+        });
+    });
+</script>
+@endpush
