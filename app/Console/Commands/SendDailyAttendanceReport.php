@@ -61,11 +61,9 @@ class SendDailyAttendanceReport extends Command
             $message .= "----------------------------------\n\n";
 
             $categories = [
-                'Hadir' => [],
-                'Terlambat' => [],
                 'Sakit' => [],
+                'Hadir' => [],
                 'Izin' => [],
-                'Alfa' => [],
             ];
 
             foreach ($students as $student) {
@@ -74,21 +72,30 @@ class SendDailyAttendanceReport extends Command
                     ->where('type', 'Masuk')
                     ->first();
 
-                $status = $attendance ? $attendance->status : 'Alfa';
-                
-                if (array_key_exists($status, $categories)) {
-                    $categories[$status][] = $student->name;
-                } else {
-                    $categories['Alfa'][] = $student->name;
+                if ($attendance) {
+                    $status = $attendance->status;
+                    $statusLower = strtolower(trim($status));
+                    $time = $attendance->time;
+                    $displayName = $student->name;
+                    
+                    if ($statusLower === 'terlambat') {
+                        $displayName = "*" . $student->name . "*";
+                    }
+
+                    if ($statusLower === 'hadir' || $statusLower === 'terlambat') {
+                        $categories['Hadir'][] = "{$displayName} ({$time})";
+                    } elseif ($statusLower === 'sakit') {
+                        $categories['Sakit'][] = $student->name;
+                    } elseif ($statusLower === 'izin') {
+                        $categories['Izin'][] = $student->name;
+                    }
                 }
             }
 
             $icons = [
                 'Hadir' => '✅',
-                'Terlambat' => '⚠️',
                 'Sakit' => 'ℹ️',
                 'Izin' => 'ℹ️',
-                'Alfa' => '❌',
             ];
 
             $hasAnyCategory = false;

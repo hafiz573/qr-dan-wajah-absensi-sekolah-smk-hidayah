@@ -61,48 +61,36 @@ class SendAfternoonAttendanceReport extends Command
             $message .= "----------------------------------\n\n";
 
             $categories = [
-                'Sudah Scan Pulang' => [],
-                'Belum Scan Pulang' => [],
-                'Sakit' => [],
-                'Izin' => [],
-                'Alfa' => [],
+                'Scan Masuk' => [],
+                'Scan Pulang' => [],
             ];
 
             foreach ($students as $student) {
+                // Fetch Masuk
+                $masuk = Attendance::where('student_id', $student->id)
+                    ->where('date', $today)
+                    ->where('type', 'Masuk')
+                    ->first();
+
+                // Fetch Pulang
                 $pulang = Attendance::where('student_id', $student->id)
                     ->where('date', $today)
                     ->where('type', 'Pulang')
                     ->first();
 
-                if ($pulang) {
-                    $categories['Sudah Scan Pulang'][] = "{$student->name} ({$pulang->time})";
-                } else {
-                    $masuk = Attendance::where('student_id', $student->id)
-                        ->where('date', $today)
-                        ->where('type', 'Masuk')
-                        ->first();
-                    
-                    $status = $masuk ? $masuk->status : 'Alfa';
+                if ($masuk && in_array($masuk->status, ['Hadir', 'Terlambat'])) {
+                    $displayName = ($masuk->status === 'Terlambat') ? "*" . $student->name . "*" : $student->name;
+                    $categories['Scan Masuk'][] = "{$displayName} ({$masuk->time})";
+                }
 
-                    if ($status === 'Sakit') {
-                        $categories['Sakit'][] = $student->name;
-                    } elseif ($status === 'Izin') {
-                        $categories['Izin'][] = $student->name;
-                    } elseif ($status === 'Alfa') {
-                        $categories['Alfa'][] = $student->name;
-                    } else {
-                        // For statuses 'Hadir' or 'Terlambat' who haven't scanned out
-                        $categories['Belum Scan Pulang'][] = $student->name;
-                    }
+                if ($pulang) {
+                    $categories['Scan Pulang'][] = "{$student->name} ({$pulang->time})";
                 }
             }
 
             $icons = [
-                'Sudah Scan Pulang' => '✅',
-                'Belum Scan Pulang' => '⚠️',
-                'Sakit' => 'ℹ️',
-                'Izin' => 'ℹ️',
-                'Alfa' => '❌',
+                'Scan Masuk' => '✅',
+                'Scan Pulang' => '✅',
             ];
 
             foreach ($categories as $status => $names) {
